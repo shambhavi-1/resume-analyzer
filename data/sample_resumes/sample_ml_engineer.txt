@@ -1,0 +1,52 @@
+Alex Kim | Senior Machine Learning Engineer
+Email: alex.kim@email.com | GitHub: github.com/alexkim | LinkedIn: linkedin.com/in/alexkim
+
+SKILLS
+Python, PyTorch, TensorFlow, scikit-learn, Pandas, NumPy, FastAPI, Docker, AWS, SQL,
+PostgreSQL, Redis, Git, NLP, Computer Vision, Flask, REST APIs, Jupyter, MLflow,
+Sentence Transformers, spaCy, FAISS, Hugging Face, Celery, Kafka
+
+EXPERIENCE
+
+Senior ML Engineer — DataVision Corp (2021–Present)
+• Built and deployed 8 production ML models serving 15M+ daily users
+• Designed real-time recommendation engine using collaborative filtering (PyTorch)
+• Reduced model inference latency by 45% via INT8 quantization + ONNX export
+• Built end-to-end MLOps pipeline: MLflow experiment tracking, Docker containers,
+  GitHub Actions CI/CD, automated model retraining triggers
+• Mentored 3 junior ML engineers; led weekly knowledge-sharing sessions
+
+ML Engineer — StartupAI Inc (2019–2021)
+• Developed NLP sentiment analysis pipeline achieving 93% accuracy on test set
+• Trained CNN-based image classification models using TensorFlow/Keras
+• Built data preprocessing pipelines processing 500GB daily with Pandas + Spark
+
+EDUCATION
+
+M.S. Computer Science — Stanford University (2019)
+  Specialization: Machine Learning and AI
+  Thesis: "Efficient Fine-Tuning of Large Language Models with LoRA"
+
+B.S. Mathematics — UC Berkeley (2017)
+  Minor: Statistics and Data Science
+
+PROJECTS
+
+AutoML Framework (github.com/alexkim/automl)
+• Open-source hyperparameter optimization library — 2,400 GitHub stars
+• Supports scikit-learn, PyTorch, TensorFlow pipelines
+• 15K monthly downloads on PyPI
+
+Real-time Fraud Detection System
+• LSTM-based anomaly detection with 0.1% false positive rate
+• Processes 10K transactions/second on 2-node Kafka cluster
+• Deployed on AWS ECS with auto-scaling
+
+NLP Resume Parser
+• spaCy + transformer-based information extraction pipeline
+• Extracts structured data (skills, education, experience) from PDFs
+• Powers this resume analyzer project!
+
+CERTIFICATIONS
+• AWS Certified Machine Learning Specialty (2022)
+• TensorFlow Developer Certificate (Google, 2021)

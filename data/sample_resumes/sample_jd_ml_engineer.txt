@@ -1,0 +1,33 @@
+Senior Machine Learning Engineer — TechForward AI
+
+About the Role
+We're building next-generation AI products used by Fortune 500 companies.
+We need a Senior ML Engineer to design, train, and deploy ML systems at scale.
+
+REQUIREMENTS
+• 4+ years hands-on experience with Python (required)
+• Deep expertise in PyTorch and/or TensorFlow
+• Production ML model deployment and serving
+• Kubernetes and Docker for containerization
+• MLOps tooling: MLflow, model monitoring, feature stores
+• AWS SageMaker or GCP Vertex AI experience
+• Strong background in NLP or Computer Vision
+• FAISS, vector databases, and embedding model experience
+• CI/CD pipelines specifically for ML workflows
+• Solid SQL and data engineering fundamentals
+
+NICE TO HAVE
+• LLM fine-tuning experience (LoRA, QLoRA, PEFT)
+• Distributed training (DDP, FSDP, DeepSpeed)
+• Triton Inference Server or TorchServe
+• Experience building RAG (Retrieval-Augmented Generation) systems
+• Kafka or other streaming data platforms
+• Rust or Go for performance-critical inference components
+• Apache Spark for large-scale data processing
+
+THE JOB
+• Design and implement end-to-end ML pipelines
+• Collaborate with data engineers to build robust feature pipelines
+• Deploy models to production and maintain SLAs
+• Lead technical design reviews and mentor junior engineers
+• Stay current with ML research and apply relevant techniques
