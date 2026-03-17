@@ -2,55 +2,71 @@
 
 A production-ready AI system that analyzes resumes against job descriptions using **semantic embeddings**, **vector similarity search**, and **NLP skill extraction** — entirely open-source, no paid APIs required.
 
+🔗 **Live Demo:** [huggingface.co/spaces/shambhavi-1/resume-analyzer](https://huggingface.co/spaces/shambhavi-1/resume-analyzer)  
+💻 **GitHub:** [github.com/shambhavi-1/resume-analyzer](https://github.com/shambhavi-1/resume-analyzer)
+
 ---
 
 ## 🎯 What It Does
 
-Upload a resume + paste a job description → get:
+Upload a resume + paste a job description → get an 8-dimension analysis:
 
 | Output | Description |
 |---|---|
-| **Match Score (0–100)** | Weighted composite of semantic similarity, skill overlap, and keyword density |
+| **Match Score (0–100)** | Weighted composite of 7 analysis dimensions |
 | **Matched Skills** | Skills you have that the JD requires |
 | **Missing Skills** | Skills the JD requires that you're lacking |
-| **Section Relevance** | How relevant each resume section is to the role |
-| **AI Suggestions** | Rule-based recommendations to improve your resume |
+| **Experience Match** | Years of experience + seniority level vs requirement |
+| **Education Match** | Degree level + field of study relevance |
+| **ATS Simulation** | How a real Applicant Tracking System would score your resume |
+| **Resume Quality** | Format, metrics, action verbs, structure check |
+| **AI Suggestions** | Prioritized recommendations to improve your resume |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      Streamlit Frontend                          │
-│  Upload PDF │ Paste JD │ View Score │ Skill Gaps │ Suggestions  │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │ HTTP (or direct call)
-┌──────────────────────────▼──────────────────────────────────────┐
-│                    FastAPI Backend                                │
-│  POST /upload_resume │ POST /analyze_resume │ POST /job_match   │
-└──────┬───────────────┬──────────────────┬───────────────────────┘
-       │               │                  │
-┌──────▼──────┐ ┌──────▼──────┐ ┌────────▼────────────────────┐
-│   Parser    │ │   Skill     │ │    Similarity Engine         │
-│ pdfplumber  │ │  Extractor  │ │ Sentence Transformers        │
-│  + PyPDF2   │ │  spaCy NLP  │ │ all-MiniLM-L6-v2 (384-dim)  │
-│ Sections ✓  │ │ 200+ skills │ │ FAISS cosine similarity      │
-└─────────────┘ └─────────────┘ └─────────────────────────────┘
-                                         │
-                               ┌─────────▼──────────┐
-                               │  Recommendation     │
-                               │  Engine (rule-based)│
-                               │  + Resource links   │
-                               └────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                   Streamlit Frontend                     │
+│  Upload PDF · Paste JD · View Score · Skill Gaps · Recs │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────┐
+│                   FastAPI Backend                        │
+│  POST /upload_resume · /analyze_resume · /job_match     │
+└──────┬──────────────┬─────────────────┬─────────────────┘
+       │              │                 │
+┌──────▼──────┐ ┌─────▼──────┐ ┌───────▼──────────────┐
+│   Parser    │ │   Skill    │ │  Similarity Engine    │
+│ pdfplumber  │ │ Extractor  │ │ Sentence Transformers │
+│  + PyPDF2   │ │ spaCy NLP  │ │ all-MiniLM-L6-v2      │
+│  Sections   │ │ 200+ skills│ │ FAISS cosine search   │
+└─────────────┘ └────────────┘ └──────────────────────┘
+       │              │                 │
+┌──────▼──────────────▼─────────────────▼─────────────────┐
+│              8-Dimension Scoring Engine                  │
+│  Experience · Education · Title · ATS · Quality         │
+└──────────────────────────────────────────────────────────┘
+                           │
+              ┌────────────▼────────────┐
+              │  Recommendation Engine  │
+              │  Rule-based · No LLM    │
+              └─────────────────────────┘
 ```
 
-### Scoring Formula
+---
+
+## 📊 Scoring Formula
 
 ```
-Overall Score = 0.40 × Semantic Score
-              + 0.40 × Skill Overlap Score
-              + 0.20 × Keyword Density Score
+Overall Score = 25% × Semantic Similarity
+              + 25% × Skill Overlap
+              + 15% × Experience Match
+              + 10% × Education Match
+              + 10% × Job Title Match
+              + 10% × Keyword Density
+              +  5% × ATS Score
 ```
 
 ---
@@ -59,29 +75,22 @@ Overall Score = 0.40 × Semantic Score
 
 ```
 resume-analyzer/
-│
 ├── api/
-│   └── main.py              # FastAPI endpoints (upload, analyze, match)
-│
+│   └── main.py                  # FastAPI backend (3 endpoints)
 ├── utils/
-│   ├── __init__.py
-│   ├── parser.py            # PDF → text → structured sections
-│   ├── skill_extractor.py   # spaCy + regex skill taxonomy (200+ skills)
-│   ├── embeddings.py        # Sentence Transformer + FAISS index
-│   └── similarity.py        # Scoring engine + recommendation generator
-│
+│   ├── parser.py                # PDF → text → structured sections
+│   ├── skill_extractor.py       # spaCy + regex (200+ skills)
+│   ├── embeddings.py            # Sentence Transformers + FAISS
+│   ├── similarity.py            # Master scoring engine
+│   ├── experience_analyzer.py   # Years + seniority detection
+│   ├── education_analyzer.py    # Degree + field relevance
+│   └── job_title_analyzer.py    # Title match + ATS simulation
 ├── app/
-│   └── streamlit_app.py     # Streamlit UI (4 tabs: Analyze, Results, Compare, Dashboard)
-│
+│   └── streamlit_app.py         # Streamlit UI (4 tabs)
 ├── tests/
-│   └── test_pipeline.py     # End-to-end test suite (no pytest required)
-│
+│   └── test_pipeline.py         # End-to-end tests
 ├── data/
-│   └── sample_resumes/
-│       ├── sample_ml_engineer.txt
-│       └── sample_jd_ml_engineer.txt
-│
-├── models/                  # Sentence Transformer cache (auto-created)
+│   └── sample_resumes/          # Sample resume + JD for testing
 ├── requirements.txt
 └── README.md
 ```
@@ -90,213 +99,73 @@ resume-analyzer/
 
 ## ⚙️ Installation
 
-### Prerequisites
-
-- Python 3.9+
-- pip or conda
-- ~500 MB disk space (model cache)
-
-### 1. Clone & install
-
 ```bash
-git clone https://github.com/yourusername/resume-analyzer
+git clone https://github.com/shambhavi-1/resume-analyzer
 cd resume-analyzer
 
 python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # Mac/Linux
 
 pip install -r requirements.txt
-```
-
-### 2. Download spaCy language model
-
-```bash
 python -m spacy download en_core_web_sm
 ```
 
-### 3. (Optional) Pre-download the embedding model
-
-The Sentence Transformer model (~90 MB) downloads automatically on first use.
-To pre-download:
-
-```bash
-python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
-```
-
 ---
 
-## 🚀 Running the Application
-
-### Option A — Streamlit UI (recommended)
+## 🚀 Run the App
 
 ```bash
 streamlit run app/streamlit_app.py
 ```
 
-Open [http://localhost:8501](http://localhost:8501)
-
-### Option B — FastAPI Backend
-
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Interactive docs: [http://localhost:8000/docs](http://localhost:8000/docs)
-
-### Option C — Both (recommended for production)
-
-```bash
-# Terminal 1: API
-uvicorn api.main:app --port 8000 --reload
-
-# Terminal 2: Streamlit
-streamlit run app/streamlit_app.py
-```
-
-In Streamlit settings sidebar, select **API (FastAPI)** mode and set URL to `http://localhost:8000`.
+Open **http://localhost:8501**
 
 ---
 
-## 🧪 Running Tests
+## 🌐 API Endpoints
 
-```bash
-python tests/test_pipeline.py
-```
+| Endpoint | Method | Description |
+|---|---|---|
+| `/upload_resume` | POST | Upload PDF, extract text + skills |
+| `/analyze_resume` | POST | Full 8-dimension analysis |
+| `/job_match` | POST | Quick match score from skill lists |
+| `/health` | GET | Health check |
 
-Or with pytest:
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## 🌐 API Reference
-
-### `POST /upload_resume`
-
-Upload a PDF or TXT resume.
-
-```bash
-curl -X POST http://localhost:8000/upload_resume \
-  -F "file=@my_resume.pdf"
-```
-
-**Response:**
-```json
-{
-  "session_id": "abc123",
-  "contact": {"name": "Alex Kim", "email": "alex@email.com"},
-  "skills": ["Python", "PyTorch", "Docker"],
-  "skills_by_category": {"ml_ai": ["PyTorch", "TensorFlow"], ...},
-  "word_count": 342,
-  "processing_time_ms": 87.3
-}
-```
-
----
-
-### `POST /analyze_resume`
-
-Full analysis pipeline.
-
-```bash
-curl -X POST http://localhost:8000/analyze_resume \
-  -H "Content-Type: application/json" \
-  -d '{
-    "resume_text": "...",
-    "job_description": "..."
-  }'
-```
-
-**Response:**
-```json
-{
-  "overall_score": 72,
-  "label": "Good Match",
-  "semantic_score": 78.4,
-  "skill_score": 65.0,
-  "keyword_score": 71.2,
-  "matched_skills": ["Python", "PyTorch", "Docker"],
-  "missing_skills": ["Kubernetes", "Spark"],
-  "section_relevance": [...],
-  "recommendations": [
-    {
-      "type": "SKILL GAP",
-      "priority": "high",
-      "text": "Build a containerized project using Kubernetes...",
-      "resource": "kubernetes.io/docs/tutorials"
-    }
-  ],
-  "processing_time_ms": 1243.5
-}
-```
-
----
-
-### `POST /job_match`
-
-Quick match from skill lists.
-
-```bash
-curl -X POST http://localhost:8000/job_match \
-  -H "Content-Type: application/json" \
-  -d '{
-    "resume_skills": ["Python", "Docker", "FastAPI"],
-    "jd_skills": ["Python", "Kubernetes", "FastAPI"],
-    "resume_text": "...",
-    "job_description": "..."
-  }'
-```
+FastAPI docs: **http://localhost:8000/docs**
 
 ---
 
 ## 🔧 Tech Stack
 
-| Component | Technology | Purpose |
-|---|---|---|
-| **PDF Parsing** | pdfplumber + PyPDF2 | Extract text from resume PDFs |
-| **NLP** | spaCy `en_core_web_sm` | Named entity recognition, noun chunks |
-| **Skill Extraction** | Custom taxonomy (200+ skills) + regex | Identify technical skills |
-| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` | 384-dim semantic vectors |
-| **Vector Search** | FAISS (IndexFlatIP) | Cosine similarity search |
-| **Backend API** | FastAPI + uvicorn | REST API with OpenAPI docs |
-| **Frontend** | Streamlit | Interactive web UI |
-| **Data** | Pandas + NumPy | Data processing |
-| **Logging** | Loguru | Structured logging |
+| Component | Technology |
+|---|---|
+| Embeddings | `sentence-transformers/all-MiniLM-L6-v2` (384-dim) |
+| Vector Search | FAISS (IndexFlatIP, cosine similarity) |
+| NLP | spaCy `en_core_web_sm` |
+| Skill Extraction | Custom taxonomy 200+ skills + regex |
+| PDF Parsing | pdfplumber + PyPDF2 |
+| Backend API | FastAPI + uvicorn |
+| Frontend | Streamlit |
+| Data Processing | Pandas + NumPy |
 
 ---
 
-## 📊 Skill Taxonomy Coverage
+## 📊 Skill Taxonomy — 8 Categories
 
-The skill extractor covers **200+ skills** across 8 categories:
-
-- **Programming Languages**: Python, JavaScript, TypeScript, Go, Rust, Java, C++, ...
-- **ML / AI**: PyTorch, TensorFlow, scikit-learn, Hugging Face, spaCy, FAISS, LLMs, ...
-- **Web Frameworks**: FastAPI, Django, React, Node.js, Spring Boot, ...
-- **Data Engineering**: SQL, PostgreSQL, MongoDB, Kafka, Spark, Airflow, Snowflake, ...
-- **DevOps / Cloud**: Docker, Kubernetes, AWS, GCP, Azure, Terraform, CI/CD, ...
-- **API / Architecture**: REST, GraphQL, gRPC, Microservices, Event-driven, ...
-- **Tools**: Git, GitHub, MLflow, Jupyter, Prometheus, ...
-- **Soft Skills**: Agile, Scrum, Technical Leadership, ...
+- **Programming Languages** — Python, JavaScript, Go, Rust, Java, C++...
+- **ML / AI** — PyTorch, TensorFlow, Hugging Face, FAISS, LLMs, RAG, LoRA...
+- **Web Frameworks** — FastAPI, Django, React, Node.js...
+- **Data Engineering** — SQL, PostgreSQL, Kafka, Spark, Airflow...
+- **DevOps / Cloud** — Docker, Kubernetes, AWS, GCP, Terraform, CI/CD...
+- **APIs** — REST, GraphQL, gRPC, Microservices...
+- **Tools** — Git, MLflow, Jupyter...
+- **Soft Skills** — Agile, Scrum, Leadership...
 
 ---
 
-## 💡 Add to Your Resume
+## 👩‍💻 Built By
 
-After completing this project:
-
-```
-• Built AI Resume Analyzer using FAISS vector search and Sentence Transformer
-  embeddings to compute semantic resume–JD similarity scores
-• Implemented NLP skill extraction pipeline with spaCy covering 200+ technical skills
-  across 8 categories including ML, DevOps, and data engineering
-• Developed FastAPI REST backend with 3 endpoints and Streamlit UI
-  for real-time interactive resume analysis
-```
-
----
-
-## 📄 License
-
-MIT License — free for personal and commercial use.
+**Shambhavi V. Abbigeri**  
+Aspiring AI/ML Engineer  
+[linkedin.com/in/shambhavi-abbigeri-3464b7333](https://linkedin.com/in/shambhavi-abbigeri-3464b7333)
