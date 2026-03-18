@@ -4,6 +4,9 @@ An AI system that analyzes resumes against job descriptions using semantic
 embeddings, vector similarity search, and NLP skill extraction — 
 entirely open-source, no paid APIs required.
 
+<img width="1920" height="890" alt="Screenshot (22)" src="https://github.com/user-attachments/assets/c30b28c7-d12d-4183-acf4-a98d9f5832e8" />
+
+
 ---
 
 ## 🎯 What It Does
